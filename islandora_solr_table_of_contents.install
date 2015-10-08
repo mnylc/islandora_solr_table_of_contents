@@ -1,0 +1,49 @@
+<?php
+
+/**
+ * @file
+ * Installation functionality for Islandora Table of Contents.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function islandora_solr_table_of_contents_install() {
+  variable_set('islandora_solr_table_of_contents_content_models', islandora_solr_table_of_contents_get_default_configuration());
+  variable_set('islandora_solr_table_of_contents_has_model_field', ISLANDORA_SOLR_TABLE_OF_CONTENTS_HAS_MODEL_DEFAULT);
+  variable_set('islandora_solr_table_of_contents_label_field', ISLANDORA_SOLR_TABLE_OF_CONTENTS_LABEL_DEFAULT);
+  variable_set('islandora_solr_table_of_contents_save_state', TRUE);
+  variable_set('islandora_solr_table_of_contents_root_node', 'last_collection');
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function islandora_solr_table_of_contents_uninstall() {
+  $variables = array(
+    'islandora_solr_table_of_contents_content_models',
+    'islandora_solr_table_of_contents_has_model_field',
+    'islandora_solr_table_of_contents_label_field',
+    'islandora_solr_table_of_contents_save_state',
+    'islandora_solr_table_of_contents_root_node',
+  );
+  array_walk($variables, 'variable_del');
+}
+
+/**
+ * Implements hook_requirements().
+ */
+function islandora_solr_table_of_contents_requirements($phase) {
+  if ($phase == 'install') {
+    $jstree = libraries_get_path('jstree');
+    $t = get_t();
+    return array(
+      'islandora_solr_table_of_contents_jstree' => array(
+        'title' => $t('Islandora Solr Table of Contents jsTree Library'),
+        'description' => $jstree !== FALSE ? NULL : $t("The jsTree library is not installed. Please download the library from <a href='@link'>jsTree</a> and install it to your site's libraries folder.",
+          array('@link' => 'https://www.jstree.com/')),
+        'severity' => $jstree !== FALSE ? REQUIREMENT_OK : REQUIREMENT_ERROR,
+      ),
+    );
+  }
+}

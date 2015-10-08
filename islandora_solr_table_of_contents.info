@@ -1,0 +1,9 @@
+name = Islandora Solr Table of Contents
+description = Implements a table of contents block for object view pages.
+core = 7.x
+version = 7.x-dev
+dependencies[] = islandora
+dependencies[] = islandora_solr
+dependencies[] = islandora_basic_collection
+dependencies[] = libraries
+package = Islandora Search
