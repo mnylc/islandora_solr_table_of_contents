@@ -28,15 +28,11 @@ Configuration options for the block exist at the site path admin/structure/block
 
 ## Troubleshooting/Issues
 
-As this relies on sessionStorage to maintain states information about the tree, saving states won't work in Internet Explorer versions below 7.
+As this relies on sessionStorage to maintain states information about the tree, saving states won't work in Internet Explorer versions below 7. The object that jsTree starts from will still function, but the jsTree nodes won't open automatically.
 
 As mentioned above, do not use this with versions of jsTree above 3.0.0; it has been tested against (and does not work with) jsTree 3.2.1, and likely will continue not to work with future iterations.
 
-Having problems or solved a problem? Check out the Islandora google groups for a solution.
-
-* [Islandora Group](https://groups.google.com/forum/?hl=en&fromgroups#!forum/islandora)
-* [Islandora Dev Group](https://groups.google.com/forum/?hl=en&fromgroups#!forum/islandora-dev)
-
+Having problems or solved a problem? Contact [discoverygarden](http://support.discoverygarden.ca).
 
 ## Maintainers/Sponsors
 Current maintainers:
@@ -49,7 +45,7 @@ This project has been sponsored by:
 
 ## Development
 
-If you would like to contribute to this module, please check out our helpful [Documentation for Developers](https://github.com/Islandora/islandora/wiki#wiki-documentation-for-developers) info, as well as our [Developers](http://islandora.ca/developers) section on the Islandora.ca site.
+If you would like to contribute to this module, please check out our helpful [Documentation for Developers](https://github.com/Islandora/islandora/wiki#wiki-documentation-for-developers) info, [Developers](http://islandora.ca/developers) section on Islandora.ca, and contact [discoverygarden](http://support.discoverygarden.ca).
 
 ## License
 
