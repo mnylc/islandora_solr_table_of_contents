@@ -15,7 +15,6 @@
  *   The table of contents.
  */
 function islandora_solr_table_of_contents_table_of_contents($object) {
-  global $base_url;
   $module_path = drupal_get_path('module', 'islandora_solr_table_of_contents');
   $library_path = libraries_get_path('jstree');
   // It's a hard dependency.
@@ -33,8 +32,11 @@ function islandora_solr_table_of_contents_table_of_contents($object) {
         "$library_path/dist/themes/default/style.min.css",
         "$module_path/css/table_of_contents.css",
       ),
-      'js' => array(
+      'js' => array( 
         "$library_path/dist/libs/jquery.js" => array(
+          'group' => JS_LIBRARY,
+        ),
+        "misc//jquery.once.js" => array(
           'group' => JS_LIBRARY,
         ),
         "$library_path/dist/jstree.min.js" => array(
@@ -109,19 +111,12 @@ function islandora_solr_table_of_contents_configuration_form() {
       );
     }
     return array(
-      'has_model_field' => array(
+      'max_objects' => array(
         '#type' => 'textfield',
-        '#title' => t('hasModel Solr Field'),
-        '#default_value' => variable_get('islandora_solr_table_of_contents_has_model_field', ISLANDORA_SOLR_TABLE_OF_CONTENTS_HAS_MODEL_DEFAULT),
-        '#description' => t('Enter the Solr field to use to get the hasModel relationship of an object.'),
-        '#element_validate' => array('islandora_solr_table_of_contents_validate_string'),
-      ),
-      'label_field' => array(
-        '#type' => 'textfield',
-        '#title' => t('Label Solr Field'),
-        '#default_value' => variable_get('islandora_solr_table_of_contents_label_field', ISLANDORA_SOLR_TABLE_OF_CONTENTS_LABEL_DEFAULT),
-        '#description' => t('Enter the Solr field to use as labels for items in the table of contents.'),
-        '#element_validate' => array('islandora_solr_table_of_contents_validate_string'),
+        '#title' => t('Max objects to return from Solr queries'),
+        '#default_value' => variable_get('islandora_solr_table_of_contents_max_objects', 1000),
+        '#description' => t('Enter the maximum number of objects to return from Solr queries. This module is ideally intended to be used on deeper hierarchies with low numbers of objects per-object-with-children; setting this extremely high may be undesirable.'),
+        '#element_validate' => array('element_validate_integer_positive'),
       ),
       'save_state' => array(
         '#type' => 'checkbox',
@@ -160,18 +155,6 @@ function islandora_solr_table_of_contents_configuration_form() {
 }
 
 /**
- * Checks if a thing is a string with content, and yells if it isn't.
- *
- * @param string $element
- *   The string to check.
- */
-function islandora_solr_table_of_contents_validate_string($element) {
-  if ($element['#value'] == '') {
-    form_set_error('islandora_solr_table_of_contents', t("Please fill out the '@title' box.", array('@title' => $element['#title'])));
-  }
-}
-
-/**
  * Updates and determines where to start the block tree from.
  *
  * @param AbstractObject $object
@@ -194,7 +177,7 @@ function islandora_solr_table_of_contents_refresh_block_start_point($object) {
     // collapsed nodes. It's just your browser session storage, don't worry.
     switch (variable_get('islandora_solr_table_of_contents_root_node', 'last_collection')) {
       case 'root_collection':
-        return islandora_object_load('islandora:root');
+        return islandora_object_load(variable_get('islandora_repository_pid', 'islandora:root'));
 
       case 'last_collection':
         if (isset($_SESSION['islandora_solr_table_of_contents_cached_pid'])) {

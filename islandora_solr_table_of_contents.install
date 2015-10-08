@@ -10,10 +10,9 @@
  */
 function islandora_solr_table_of_contents_install() {
   variable_set('islandora_solr_table_of_contents_content_models', islandora_solr_table_of_contents_get_default_configuration());
-  variable_set('islandora_solr_table_of_contents_has_model_field', ISLANDORA_SOLR_TABLE_OF_CONTENTS_HAS_MODEL_DEFAULT);
-  variable_set('islandora_solr_table_of_contents_label_field', ISLANDORA_SOLR_TABLE_OF_CONTENTS_LABEL_DEFAULT);
   variable_set('islandora_solr_table_of_contents_save_state', TRUE);
   variable_set('islandora_solr_table_of_contents_root_node', 'last_collection');
+  variable_set('islandora_solr_table_of_contents_max_objects', 1000);
 }
 
 /**
@@ -22,10 +21,9 @@ function islandora_solr_table_of_contents_install() {
 function islandora_solr_table_of_contents_uninstall() {
   $variables = array(
     'islandora_solr_table_of_contents_content_models',
-    'islandora_solr_table_of_contents_has_model_field',
-    'islandora_solr_table_of_contents_label_field',
     'islandora_solr_table_of_contents_save_state',
     'islandora_solr_table_of_contents_root_node',
+    'islandora_solr_table_of_contents_max_objects',
   );
   array_walk($variables, 'variable_del');
 }

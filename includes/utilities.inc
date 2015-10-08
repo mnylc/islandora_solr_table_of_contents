@@ -17,8 +17,8 @@
  */
 function islandora_solr_table_of_contents_get_children(AbstractObject $object) {
   // Some variables we'll need.
-  $has_model = variable_get('islandora_solr_table_of_contents_has_model_field', ISLANDORA_SOLR_TABLE_OF_CONTENTS_HAS_MODEL_DEFAULT);
-  $label = variable_get('islandora_solr_table_of_contents_label_field', ISLANDORA_SOLR_TABLE_OF_CONTENTS_LABEL_DEFAULT);
+  $has_model = variable_get('islandora_solr_content_model_field', 'RELS_EXT_hasModel_uri_ms');
+  $label = variable_get('islandora_solr_object_label_field', 'fgs_label_s');
   $config = islandora_solr_table_of_contents_get_object_config($object);
   if (empty($config)) {
     return array();
@@ -26,7 +26,7 @@ function islandora_solr_table_of_contents_get_children(AbstractObject $object) {
 
   // Start building the query to send off.
   $p = new IslandoraSolrQueryProcessor();
-  $p->solrLimit = 1000;
+  $p->solrLimit = variable_get('islandora_solr_table_of_contents_max_objects', 1000);
   $p->solrParams = array('fl' => "PID, $has_model, $label");
   if (isset($config['sort_field'])) {
     $p->solrParams['sort'] = islandora_solr_table_of_contents_add_pid_to_field($object->id, $config['sort_field']) . " asc";

@@ -6,15 +6,12 @@
  */
 
 /**
- * Returns the children of an object using configured Solr fields/sorting.
+ * Outputs JSON representing the children of an object using Solr.
  *
  * @param AbstractObject $object
  *   The object to get children for.
- *
- * @return string
- *   Some fancy JSON.
  */
-function islandora_solr_table_of_contents_get_jstree_list(AbstractObject $object, $json = TRUE) {
+function islandora_solr_table_of_contents_get_jstree_list(AbstractObject $object) {
   global $base_url;
   module_load_include('inc', 'islandora_solr_table_of_contents', 'includes/utilities');
   $children = islandora_solr_table_of_contents_get_children($object);
@@ -27,12 +24,11 @@ function islandora_solr_table_of_contents_get_jstree_list(AbstractObject $object
   // Oh boy, here I go listin' again!
   $master_list = array();
   foreach ($children as $child) {
-    $pid = str_replace(':', '-', $child['PID']);
     $child_data = array(
       'id' => $child['PID'],
       'text' => $child['label'],
       'a_attr' => array(
-        'href' => "/islandora/object/{$child['PID']}",
+        'href' => url("islandora/object/{$child['PID']}"),
       ),
     );
     // If this content model potentially has children, we should make this a
