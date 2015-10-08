@@ -32,7 +32,7 @@ function islandora_solr_table_of_contents_table_of_contents($object) {
         "$library_path/dist/themes/default/style.min.css",
         "$module_path/css/table_of_contents.css",
       ),
-      'js' => array( 
+      'js' => array(
         "$library_path/dist/libs/jquery.js" => array(
           'group' => JS_LIBRARY,
         ),

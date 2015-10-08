@@ -6,16 +6,6 @@
  */
 
 /**
- * Implements hook_install().
- */
-function islandora_solr_table_of_contents_install() {
-  variable_set('islandora_solr_table_of_contents_content_models', islandora_solr_table_of_contents_get_default_configuration());
-  variable_set('islandora_solr_table_of_contents_save_state', TRUE);
-  variable_set('islandora_solr_table_of_contents_root_node', 'last_collection');
-  variable_set('islandora_solr_table_of_contents_max_objects', 1000);
-}
-
-/**
  * Implements hook_uninstall().
  */
 function islandora_solr_table_of_contents_uninstall() {

@@ -6,7 +6,7 @@
  */
 
 /**
- * Alters the default table of contents configuration.
+ * Provides for default table of contents configuration.
  *
  * The configuration is an array whose keys are content model PIDs associated
  * with arrays, which can contain:
@@ -20,10 +20,11 @@
  * - 'sort_field': an optional field to sort Solr results on. This won't do
  *   anything by itself.
  *
- * @param array $configuration
- *   The default configuration, passed in by reference.
+ * @return array
+ *   Default configuration settings array.
  */
-function hook_islandora_solr_table_of_contents_default_configuration_alter(&$configuration) {
+function hook_islandora_solr_table_of_contents_default_configuration() {
+  $configuration = array();
   // Add in a content model that renders the block but has no children.
   $configuration['some:contentModel'] = array();
   // Add in a content model that has children.
@@ -35,4 +36,15 @@ function hook_islandora_solr_table_of_contents_default_configuration_alter(&$con
     'solr_field' => 'some_other_solr_field',
     'sort_field' => 'some_sortable_field',
   );
+  return $configuration;
+}
+
+/**
+ * Alteration hook for the table of contents default configuration.
+ *
+ * @param array $configuration
+ *   The default configuration array, passed in by reference.
+ */
+function hook_islandora_solr_table_of_contents_default_configuration_alter(&$configuration) {
+  $configuration['some:existingCModel']['solr_field'] = 'a_different_field_than_the_one_originally_configured';
 }
