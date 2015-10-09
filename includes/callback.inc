@@ -12,7 +12,6 @@
  *   The object to get children for.
  */
 function islandora_solr_table_of_contents_get_jstree_list(AbstractObject $object) {
-  global $base_url;
   module_load_include('inc', 'islandora_solr_table_of_contents', 'includes/utilities');
   $children = islandora_solr_table_of_contents_get_children($object);
   // Models with Children sounds like a depressing tumblr account.
