@@ -17,9 +17,10 @@ function islandora_solr_table_of_contents_get_jstree_list(AbstractObject $object
   $children = islandora_solr_table_of_contents_get_children($object);
   // Models with Children sounds like a depressing tumblr account.
   $model_config = variable_get('islandora_solr_table_of_contents_content_models', islandora_solr_table_of_contents_get_default_configuration());
-  $models_with_children = array_map(function($key) {
+  $filter = function($key) {
     return isset($key['solr_field']);
-  }, $model_config);
+  };
+  $models_with_children = array_filter($model_config, $filter);
 
   // Oh boy, here I go listin' again!
   $master_list = array();
@@ -33,10 +34,8 @@ function islandora_solr_table_of_contents_get_jstree_list(AbstractObject $object
     );
     // If this content model potentially has children, we should make this a
     // collapsible, collapsed node.
-    foreach ($child['models'] as $model) {
-      if (in_array($model, array_keys($models_with_children)) && $models_with_children[$model]) {
-        $child_data['children'] = TRUE;
-      }
+    if (array_intersect_key($child['models'], $models_with_children)) {
+      $child_data['children'] = TRUE;
     }
     $master_list[] = $child_data;
   }
