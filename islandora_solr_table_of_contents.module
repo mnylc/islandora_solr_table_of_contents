@@ -6,8 +6,6 @@
  */
 
 define('ISLANDORA_SOLR_TABLE_OF_CONTENTS_MANAGE_TABLE_OF_CONTENTS', 'manage islandora solr table of contents');
-define('ISLANDORA_SOLR_TABLE_OF_CONTENTS_HAS_MODEL_DEFAULT', 'RELS_EXT_hasModel_uri_ms');
-define('ISLANDORA_SOLR_TABLE_OF_CONTENTS_LABEL_DEFAULT', 'fgs_label_s');
 
 /**
  * Implements hook_menu().
@@ -17,7 +15,8 @@ function islandora_solr_table_of_contents_menu() {
     'islandora_solr_table_of_contents/%islandora_object' => array(
       'page callback' => 'islandora_solr_table_of_contents_get_jstree_list',
       'page arguments' => array(1),
-      'access arguments' => array(ISLANDORA_VIEW_OBJECTS),
+      'access callback' => 'islandora_object_access',
+      'access arguments' => array(ISLANDORA_VIEW_OBJECTS, 1),
       'type' => MENU_CALLBACK,
       'file' => 'includes/callback.inc',
       'load arguments' => array(1),
@@ -39,19 +38,26 @@ function islandora_solr_table_of_contents_block_info() {
 /**
  * Implements hook_block_view().
  */
-function islandora_solr_table_of_contents_block_view() {
+function islandora_solr_table_of_contents_block_view($delta) {
   $block = array();
-  $object = menu_get_object('islandora_object', 2);
-  if ($object) {
-    $content_models = variable_get('islandora_solr_table_of_contents_content_models', islandora_solr_table_of_contents_get_default_configuration());
-    $valid_models = array_intersect(array_keys($content_models), $object->models);
-    if (!empty($valid_models)) {
-      module_load_include('inc', 'islandora_solr_table_of_contents', 'includes/block');
-      $start_object = islandora_solr_table_of_contents_refresh_block_start_point($object);
-      $block['subject'] = t('@label Table of Contents', array('@label' => $start_object->label));
-      $block['content'] = islandora_solr_table_of_contents_table_of_contents($start_object);
-      return $block;
-    }
+  switch ($delta) {
+    case 'islandora_solr_table_of_contents':
+      $object = menu_get_object('islandora_object', 2);
+      if ($object) {
+        $content_models = variable_get('islandora_solr_table_of_contents_content_models', islandora_solr_table_of_contents_get_default_configuration());
+        $valid_models = array_intersect(array_keys($content_models), $object->models);
+        if (!empty($valid_models)) {
+          module_load_include('inc', 'islandora_solr_table_of_contents', 'includes/block');
+          $start_object = islandora_solr_table_of_contents_refresh_block_start_point($object);
+          $block['subject'] = t('@label Table of Contents', array('@label' => $start_object->label));
+          $block['content'] = islandora_solr_table_of_contents_table_of_contents($start_object);
+          return $block;
+        }
+      }
+      break;
+
+    default:
+      break;
   }
   return $block;
 }
@@ -60,30 +66,43 @@ function islandora_solr_table_of_contents_block_view() {
  * Implements hook_block_configure().
  */
 function islandora_solr_table_of_contents_block_configure($delta) {
-  module_load_include('inc', 'islandora_solr_table_of_contents', 'includes/block');
-  return islandora_solr_table_of_contents_configuration_form();
+  switch ($delta) {
+    case 'islandora_solr_table_of_contents':
+      module_load_include('inc', 'islandora_solr_table_of_contents', 'includes/block');
+      return islandora_solr_table_of_contents_configuration_form();
+
+    default:
+      break;
+  }
 }
 
 /**
  * Implements hook_block_save().
  */
 function islandora_solr_table_of_contents_block_save($delta = '', $edit = array()) {
-  $content_models = array();
-  foreach ($edit['islandora_solr_table_of_contents_content_models']['rows'] as $pid => $row) {
-    if ($row['selected']) {
-      $content_models[$pid] = array();
-      if ($row['solr_field'] !== '') {
-        $content_models[$pid]['solr_field'] = $row['solr_field'];
+  switch ($delta) {
+    case 'islandora_solr_table_of_contents':
+      $content_models = array();
+      foreach ($edit['islandora_solr_table_of_contents_content_models']['rows'] as $pid => $row) {
+        if ($row['selected']) {
+          $content_models[$pid] = array();
+          if ($row['solr_field'] !== '') {
+            $content_models[$pid]['solr_field'] = $row['solr_field'];
+          }
+          if ($row['sort_field'] !== '') {
+            $content_models[$pid]['sort_field'] = $row['sort_field'];
+          }
+        }
       }
-      if ($row['sort_field'] !== '') {
-        $content_models[$pid]['sort_field'] = $row['sort_field'];
-      }
-    }
+      variable_set('islandora_solr_table_of_contents_content_models', $content_models);
+      variable_set('islandora_solr_table_of_contents_save_state', $edit['save_state']);
+      variable_set('islandora_solr_table_of_contents_root_node', $edit['save_state'] ? $edit['root_node'] : NULL);
+      variable_set('islandora_solr_table_of_contents_max_objects', $edit['max_objects']);
+      break;
+
+    default:
+      break;
   }
-  variable_set('islandora_solr_table_of_contents_content_models', $content_models);
-  variable_set('islandora_solr_table_of_contents_has_model_field', $edit['has_model_field']);
-  variable_set('islandora_solr_table_of_contents_save_state', $edit['save_state']);
-  variable_set('islandora_solr_table_of_contents_root_node', $edit['save_state'] ? $edit['root_node'] : NULL);
 }
 
 /**
@@ -111,12 +130,11 @@ function islandora_solr_table_of_contents_theme($existing, $type, $theme, $path)
 }
 
 /**
- * Default configuration for content models.
+ * Implements hook_islandora_solr_table_of_contents_default_configuration().
  *
- * @return array
- *   An array representing the default block configuration.
+ * Default configuration for content models.
  */
-function islandora_solr_table_of_contents_get_default_configuration() {
+function islandora_solr_table_of_contents_islandora_solr_table_of_contents_default_configuration() {
   return array(
     'islandora:collectionCModel' => array(
       'solr_field' => 'RELS_EXT_isMemberOfCollection_uri_ms',
@@ -138,4 +156,20 @@ function islandora_solr_table_of_contents_get_default_configuration() {
       'sort_field' => 'RELS_EXT_isSequenceNumberOf%pid_literal_s',
     ),
   );
+}
+
+/**
+ * Assemble the default content models configuration.
+ *
+ * Does so from hook_islandora_solr_table_of_contents_default_configuration()
+ * and the associated alter; check islandora_solr_table_of_contents.api.php
+ * for more details.
+ *
+ * @return array
+ *   The compiled default config.
+ */
+function islandora_solr_table_of_contents_get_default_configuration() {
+  $config = module_invoke_all('islandora_solr_table_of_contents_default_configuration');
+  drupal_alter('islandora_solr_table_of_contents_default_configuration', $config);
+  return $config;
 }
