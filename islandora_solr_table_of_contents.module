@@ -133,9 +133,6 @@ function islandora_solr_table_of_contents_theme($existing, $type, $theme, $path)
  * Implements hook_islandora_solr_table_of_contents_default_configuration().
  *
  * Default configuration for content models.
- *
- * @return array
- *   An array representing the default block configuration.
  */
 function islandora_solr_table_of_contents_islandora_solr_table_of_contents_default_configuration() {
   return array(
