@@ -19,7 +19,7 @@ function islandora_solr_table_of_contents_get_jstree_list(AbstractObject $object
   $filter = function($key) {
     return isset($key['solr_field']);
   };
-  $models_with_children = array_filter($model_config, $filter);
+  $models_with_children = array_keys(array_filter($model_config, $filter));
 
   // Oh boy, here I go listin' again!
   $master_list = array();
@@ -33,7 +33,7 @@ function islandora_solr_table_of_contents_get_jstree_list(AbstractObject $object
     );
     // If this content model potentially has children, we should make this a
     // collapsible, collapsed node.
-    if (array_intersect($child_models, array_keys($models_with_children))) {
+    if (array_intersect($child_models, $models_with_children)) {
       $child_data['children'] = TRUE;
     }
     $master_list[] = $child_data;
