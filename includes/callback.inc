@@ -33,8 +33,7 @@ function islandora_solr_table_of_contents_get_jstree_list(AbstractObject $object
     );
     // If this content model potentially has children, we should make this a
     // collapsible, collapsed node.
-    $child_models = array_flip($child['models']);
-    if (array_intersect_key($child_models, $models_with_children)) {
+    if (array_intersect($child_models, array_keys($models_with_children))) {
       $child_data['children'] = TRUE;
     }
     $master_list[] = $child_data;
