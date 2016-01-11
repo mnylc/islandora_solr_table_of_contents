@@ -26,6 +26,15 @@ Configuration options for the block exist at the site path admin/structure/block
 - Enabling and specification of which content models to render the block on, as well as configuration to determine the Solr fields that store child relationships and how children are sorted. These fields should be string literal fields. By default, the block is only rendered on pages for object types that have children. This can be expanded to other content models that don't have children by checking off other content models and simply not filling out the "Solr Field" entry for that content model. This only really works with states enabled, however; otherwise when the object is determined to have no children, the block simply won't be rendered.
 - Whether or not to save the table of contents state for the duration of a user's session. If so, options are also given on where to draw the tree from.
 
+In addition, the block relies on some of the base settings for the Islandora Solr Search module, found at admin/islandora/search/islandora_solr/settings, specifically these two under the "Required Solr fields" section:
+
+- Content model Solr field
+- Object label Solr field
+
+These two fields are used to find what content models an object has, and what label to use inside the table of contents block, respectively.
+
+Note that the isMemberOf and isMemberOfCollection configuration fields in this section of the Solr config are ignored in favour of custom settings per-content-model in the block configuration.
+
 ## Troubleshooting/Issues
 
 As this relies on sessionStorage to maintain states information about the tree, saving states won't work in Internet Explorer versions below 7. The object that jsTree starts from will still function, but the jsTree nodes won't open automatically.
