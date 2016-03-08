@@ -29,6 +29,7 @@ function islandora_solr_table_of_contents_get_jstree_list(AbstractObject $object
       'text' => $child['label'],
       'a_attr' => array(
         'href' => url("islandora/object/{$child['PID']}"),
+        'title' => $child['label'],
       ),
     );
     // If this content model potentially has children, we should make this a

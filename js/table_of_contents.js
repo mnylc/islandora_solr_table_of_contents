@@ -8,13 +8,13 @@
     attach: function (context, settings) {
       if (typeof settings.islandora_solr_table_of_contents.jstree.info != 'undefined') {
         for (var id in settings.islandora_solr_table_of_contents.jstree.info) {
-          var jstree_settings = settings.islandora_solr_table_of_contents.jstree.info[id]; 
+          var jstree_settings = settings.islandora_solr_table_of_contents.jstree.info[id];
           var hash_id = '#' + id;
           $(hash_id).once('islandora-solr-table-of-contents-jstree', function () {
             $.extend(jstree_settings, {
               'core': {
                 'data': {
-                  'url': function (node) { 
+                  'url': function (node) {
                     var endpoint = node.id === '#' ? jstree_settings.pid : node.id;
                     return Drupal.settings.basePath + "islandora_solr_table_of_contents/" + endpoint;
                   }
@@ -35,6 +35,18 @@
                 }
               }
             });
+          });
+          function updateThumb(){
+            $(hash_id + ' .jstree-container-ul').each(function(){
+              $(this).find('.jstree-node').each(function(){
+                var encoded_pid = encodeURIComponent($(this).attr('id'));
+                var thumb_background_style = "background: white url(/islandora/object/" + encoded_pid + "/datastream/TN/view) no-repeat center center; background-size:32px;";
+                $(this).find('a').find('i').attr('style', thumb_background_style);
+              });
+            });
+          }
+          $(hash_id).on('loaded.jstree open_node.jstree load_node.jstree', function(e, data) {
+              updateThumb();
           });
         }
       }
