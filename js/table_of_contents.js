@@ -36,17 +36,14 @@
               }
             });
           });
-          function updateThumb(){
-            $(hash_id + ' .jstree-container-ul').each(function(){
-              $(this).find('.jstree-node').each(function(){
-                var encoded_pid = encodeURIComponent($(this).attr('id'));
-                var thumb_background_style = "background: white url(/islandora/object/" + encoded_pid + "/datastream/TN/view) no-repeat center center; background-size:32px;";
-                $(this).find('a').find('i').attr('style', thumb_background_style);
-              });
-            });
-          }
           $(hash_id).on('loaded.jstree open_node.jstree load_node.jstree', function(e, data) {
-              updateThumb();
+              $(hash_id + ' .jstree-container-ul').each(function(){
+                  $(this).find('.jstree-node').each(function(){
+                      var encoded_pid = encodeURIComponent($(this).attr('id'));
+                      var thumb_background_style = "background: white url("+ Drupal.settings.basePath + "islandora/object/" + encoded_pid + "/datastream/TN/view) no-repeat center center; background-size:32px;";
+                      $(this).find('a').find('i').attr('style', thumb_background_style);
+                  });
+              });
           });
         }
       }
