@@ -26,9 +26,9 @@ function islandora_solr_table_of_contents_get_children(AbstractObject $object) {
 
   // Start building the query to send off.
   $p = new IslandoraSolrQueryProcessor();
+  $p->solrParams = array('fl' => "PID, $has_model, $label");
   $limit = variable_get('islandora_solr_table_of_contents_max_objects', 1000);
   $params = array(
-    'fl' => "PID, $has_model, $label",
     'limit' => $limit,
   );
   if (isset($config['sort_field'])) {
