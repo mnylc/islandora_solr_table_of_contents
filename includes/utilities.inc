@@ -26,7 +26,9 @@ function islandora_solr_table_of_contents_get_children(AbstractObject $object) {
 
   // Start building the query to send off.
   $p = new IslandoraSolrQueryProcessor();
+  $query = '*:*';
   $p->solrParams = array('fl' => "PID, $has_model, $label");
+
   $limit = variable_get('islandora_solr_table_of_contents_max_objects', 1000);
   $params = array(
     'limit' => $limit,
@@ -34,7 +36,7 @@ function islandora_solr_table_of_contents_get_children(AbstractObject $object) {
   if (isset($config['sort_field'])) {
     $params['sort'] = islandora_solr_table_of_contents_add_pid_to_field($object->id, $config['sort_field']) . " asc";
   }
-  $query = format_string('!relationship_field:("info:fedora/!pid" OR "!pid")', array(
+  $p->solrParams['fq'][]  = format_string('+!relationship_field:("info:fedora/!pid" OR "!pid")', array(
     '!relationship_field' => $config['solr_field'],
     '!pid' => $object->id,
   ));
